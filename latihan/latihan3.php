@@ -22,6 +22,10 @@ $mahasiswa = query($query);
 
   <h3>Daftar mahasiswa</h3>
 
+  <a href="tambah.php">Tambah data</a>
+  <br>
+  <br>
+
   <table border="1" cellpading="10" cellspacing="0" style="text-align: center;">
 
     <tr>
