@@ -6,6 +6,12 @@ $query = "SELECT * FROM tb_mahasiswa";
 
 $mahasiswa = query($query);
 
+//ketika tombol cari diklik
+
+if (isset($_POST['cari'])) {
+  $mahasiswa = cari($_POST['keyword']);
+}
+
 ?>
 
 
@@ -26,7 +32,15 @@ $mahasiswa = query($query);
   <br>
   <br>
 
-  <table border="1" cellpading="10" cellspacing="0" style="text-align: center;">
+  <form action="" method="POST">
+    <input type="text" name="keyword" size="40px" placeholder="Masukkan Keyword Cari..." autocomplete="off" autofocus>
+    <button type="submit" name="cari">Cari</button>
+  </form>
+
+  <br>
+  <br>
+
+  <table border="1" cellpadding="10" cellspacing="0" style="text-align: center;">
 
     <tr>
 
@@ -37,6 +51,15 @@ $mahasiswa = query($query);
       <th>Aksi</th>
 
     </tr>
+
+    <?php if (empty($mahasiswa)) : ?>
+      <tr>
+        <td colspan="5">
+          <p style="color: red; font-style: italic;">Data mahasiswa tidak ditemukan.!</p>
+        </td>
+      </tr>
+
+    <?php endif; ?>
 
     <?php $i = 1;
     foreach ($mahasiswa as $m) : ?>
