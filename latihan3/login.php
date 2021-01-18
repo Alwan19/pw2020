@@ -57,6 +57,7 @@ if (isset($_POST['login'])) {
 
       <button type="submit" name="login">Login</button>
     </ul>
+    <a href="registrasi.php">Registrasi</a>
 
   </form>
 

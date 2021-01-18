@@ -111,19 +111,85 @@ function login($data)
   $username = htmlspecialchars($data['username']);
   $password = htmlspecialchars($data['password']);
 
-  $query = "SELECT * FROM tb_user WHERE username = '$username' && password = '$password'";
+  //cek username
+  $query = "SELECT * FROM tb_user WHERE username = '$username'";
+  if ($user = query($query)) {
 
-  if (query($query)) {
+    //cek password
+    if (password_verify($password, $user['password'])) {
+      //set session
+      $_SESSION['login'] = true;
 
-    //set session
-    $_SESSION['login'] = true;
-
-    header("Location: index.php");
-    exit;
+      header("Location: index.php");
+      exit;
+    }
   } else {
     return [
       'error' => true,
       'pesan' => 'username atau password salah'
     ];
   }
+}
+
+function registrasi($data)
+{
+  $conn = koneksi();
+
+  $username = htmlspecialchars(strtolower($data['username']));
+  $password1 = mysqli_real_escape_string($conn, $data['password1']);
+  $password2 = mysqli_real_escape_string($conn, $data['password2']);
+
+  //username / password kosong
+  if (empty($username) || empty($password1) || empty($password2)) {
+    echo "<script>
+          alert('username / password tidak boleh kosong');
+          document.location.href = 'registrasi.php';
+          </script>";
+
+    return false;
+  }
+
+  //username ada
+  $query = "SELECT * FROM tb_user WHERE username = '$username'";
+  if (query($query)) {
+    echo "<script>
+            alert('username sudah terdaftar');
+            document.location.href = 'registrasi.php';
+            </script>";
+
+    return false;
+  }
+
+  //password dan konfirmasi password tidak sesuai
+  if ($password1 !== $password2) {
+    echo "<script>
+            alert('konfirmasi password tidak sesuai');
+            document.location.href = 'registrasi.php';
+            </script>";
+
+    return false;
+  }
+
+  //password < 5 digit
+  if (strlen($password1) < 5) {
+    echo "<script>
+            alert('password terlalu pendek');
+            document.location.href = 'registrasi.php';
+            </script>";
+
+    return false;
+  }
+
+  //username dan password sesuai
+  //enkripsi password
+  $password_baru = password_hash($password1, PASSWORD_DEFAULT);
+
+  //isert ke tabel user
+  $query = "INSERT INTO 
+            tb_user
+            VALUES
+            (null, '$username', '$password_baru')
+            ";
+  mysqli_query($conn, $query) or die(mysqli_error($conn));
+  return mysqli_affected_rows($conn);
 }
